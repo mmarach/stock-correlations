@@ -2,9 +2,101 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>AAPL Value</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Correlation Calculator</title>
+
+    <!-- Bootstrap CSS (CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
 </head>
-<body>
-    <h1>Cuurent value of AAPL: {{ value }}</h1>
+<body class="container mt-4">
+
+    <h2 class="text-center mb-4">Enter Stock Tickers</h2>
+
+    <form id="tickerForm" class="mb-4">
+
+        <!-- FLEX ROW FOR TICKER + START/END DATE -->
+        <div class="d-flex flex-wrap align-items-end gap-3">
+            <!-- Stock Ticker Input -->
+            <div class="w-auto">
+                <label for="tickerInput" class="form-label">Add Stock Ticker:</label>
+                <input type="text" id="tickerInput" class="form-control" placeholder="Enter ticker and press Enter">
+            </div>
+
+            <!-- Start Date -->
+            <div>
+                <label for="startDate" class="form-label">Start Date:</label>
+                <input type="date" id="startDate" name="start_date" class="form-control">
+            </div>
+
+            <!-- End Date -->
+            <div>
+                <label for="endDate" class="form-label">End Date:</label>
+                <input type="date" id="endDate" name="end_date" class="form-control">
+            </div>
+        </div>
+
+        <input type="hidden" id="tickersField" name="tickers">
+
+        <button type="submit" class="btn btn-primary mt-3">Submit</button>
+        <button type="button" id="clearButton" class="btn btn-secondary mt-3 ms-2">Clear</button> <!-- Clear button -->
+    </form>
+
+    <p id="tickersList" class="form-label">Tickers selected so far: </p>
+    <div id="correlationResults" class="mt-4"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        let tickers = [];
+
+        document.getElementById("tickerInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                let ticker = this.value.trim().toUpperCase();
+
+                if (ticker && !tickers.includes(ticker)) {
+                    tickers.push(ticker);
+                    document.getElementById("tickersList").innerText = "Selected tickers: " + tickers.join(", ");
+                    this.value = "";  // Clear input field
+                }
+            }
+        });
+
+        // Event listener for the Clear button
+        document.getElementById("clearButton").addEventListener("click", function() {
+            tickers = []; // Clear the tickers list
+            document.getElementById("tickersList").innerText = "Tickers selected so far: "; // Update UI
+            document.getElementById("tickerInput").value = ""; // Clear the input field
+        });
+
+        document.getElementById("tickerForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let startDate = document.getElementById("startDate").value;
+            let endDate = document.getElementById("endDate").value;
+
+            if (!startDate || !endDate) {
+                alert("Please select a start and end date.");
+                return;
+            }
+
+            let formData = new FormData(this);
+            formData.set("tickers", JSON.stringify(tickers));
+
+            fetch("/submit", {
+                method: "POST",
+                body: formData,
+            })
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById("correlationResults").innerHTML = html;
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    </script>
+
 </body>
 </html>
