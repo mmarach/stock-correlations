@@ -29,7 +29,7 @@ def calculate_correlations(stock_prices: pd.DataFrame) -> pd.DataFrame:
 def get_correlation_matrix(stocks: list[str], start_dt: date, end_dt: date, price_type: PriceType) -> pd.DataFrame:
     stock_prices = get_stock_prices(stocks, start_dt, end_dt, PriceType.CLOSE)
     corr_matrix = calculate_correlations(stock_prices)
-    return corr_matrix.round(2)
+    return corr_matrix
 
 
 if __name__ == '__main__':
