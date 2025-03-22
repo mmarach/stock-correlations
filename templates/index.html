@@ -2,7 +2,7 @@
 {% block content %}
     <div class="controls-section">
         <form id="tickerForm" method="post" action="{{ url_for('submit') }}">
-            {{ form.hidden_tag() }}  <!-- CSRF Token and hidden fields -->
+            {{ form.hidden_tag() }}  <!-- CSRF token and hidden fields -->
             <fieldset class="d-flex flex-wrap align-items-end gap-3">
                 <div class="form-group w-auto">
                     <label for="tickerInput">Add Ticker</label>
@@ -25,8 +25,6 @@
                     {{ form.use_adjusted(class_="bootstrap-switch-square") }}
                 </div>
             </fieldset>
-            <fieldset class="d-flex flex-wrap align-items-end gap-3">
-            </fieldset>
             <div class="form-group">
                 {{ form.submit(class_="btn btn-primary mt-3") }}
                 <button type="button" id="clearButton" class="btn btn-secondary mt-3 ms-2">Clear</button>
@@ -35,7 +33,6 @@
         <div class="border-top pt-2 mt-3">
             <p id="tickersList" class="form-label text-muted">Selected tickers: </p>
         </div>
-    </div>
     </div>
     <div>
         <div id="correlationResults" class="mt-4"></div>
