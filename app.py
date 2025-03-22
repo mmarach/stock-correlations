@@ -1,8 +1,11 @@
 from flask import Flask, render_template, url_for, request, jsonify
 from forms import TickerForm
 import json
+import pandas as pd
 
 from data.correlations import get_correlation_matrix, PriceType
+
+pd.options.display.float_format = "{:,.2f}".format
 
 app = Flask(__name__)
 
@@ -24,17 +27,9 @@ def submit():
         end_date = form.end_date.data
         correlation_matrix = get_correlation_matrix(tickers, start_date, end_date, PriceType.CLOSE)
 
-        correlation_matrix.style.background_gradient()
-
         return correlation_matrix.to_html(classes="corr-table")  # Directly return the HTML table
 
     return "<p>Error: Invalid submission</p>", 400
-
-
-# @app.route('/add_ticker', methods=['POST'])
-# def add_ticker():
-#     ticker = request.json.get('ticker', '').strip().upper()
-#     return jsonify({'ticker': ticker})  # Return cleaned ticker
 
 
 if __name__ == '__main__':
