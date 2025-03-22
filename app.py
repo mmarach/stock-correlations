@@ -29,7 +29,14 @@ def submit():
 
         return correlation_matrix.to_html(classes="corr-table")  # Directly return the HTML table
 
-    return "<p>Error: Invalid submission</p>", 400
+    # If form is invalid, return the form's errors
+    errors = []
+    for field_name, field_errors in form.errors.items():
+        for error in field_errors:
+            errors.append(f"{field_name}: {error}")
+
+    # Return a detailed error message
+    return "<p>" + "<br>".join(errors) + "</p>", 400
 
 
 if __name__ == '__main__':
