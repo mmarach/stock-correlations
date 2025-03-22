@@ -17,8 +17,8 @@
             {{ form.hidden_tag() }}  <!-- CSRF Token and hidden fields -->
             <fieldset class="d-flex flex-wrap align-items-end gap-3">
                 <div class="form-group w-auto">
-                    {{ form.tickerInput.label(class="form-control-label") }}
-                    {{ form.tickerInput(class_="form-control", id="tickerInput", placeholder="Enter ticker and press Enter") }}
+                    <label for="tickerInput">Add Ticker</label>
+                    <input type="text" id="tickerInput" placeholder="Enter ticker and press Enter" class="form-control">
                 </div>
                 <div class="form-group">
                     {{ form.start_date.label(class="form-control-label") }}
@@ -28,6 +28,16 @@
                     {{ form.end_date.label(class="form-control-label") }}
                     {{ form.end_date(class_="form-control") }}
                 </div>
+                <div class="form-group">
+                    {{ form.use_returns.label(class="form-control-label") }}
+                    {{ form.use_returns(class_="bootstrap-switch-square") }}
+                </div>
+                <div class="form-group">
+                    {{ form.use_adjusted.label(class="form-control-label") }}
+                    {{ form.use_adjusted(class_="bootstrap-switch-square") }}
+                </div>
+            </fieldset>
+            <fieldset class="d-flex flex-wrap align-items-end gap-3">
             </fieldset>
             <div class="form-group">
                 {{ form.submit(class_="btn btn-primary mt-3") }}
@@ -35,7 +45,7 @@
             </div>
         </form>
         <div class="border-top pt-2 mt-3">
-            <p id="tickersList" class="form-label text-muted">Tickers selected so far: </p>
+            <p id="tickersList" class="form-label text-muted">Selected tickers: </p>
         </div>
     </div>
     </div>
@@ -61,7 +71,7 @@
 
         document.getElementById("clearButton").addEventListener("click", function() {
             tickers = [];
-            document.getElementById("tickersList").innerText = "Tickers selected so far: ";
+            document.getElementById("tickersList").innerText = "Selected tickers: ";
             document.getElementById("tickerInput").value = "";
         });
 
