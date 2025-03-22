@@ -9,13 +9,34 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
 </head>
-<body class="container mt-4">
+<body class="container">
 
-    <h3 class="text-center mb-4">Stocks Correlations</h3>
+    <!-- Navigation bar -->
+    <header class="site-header">
+        <nav class="navbar navbar-light navbar-expand-md fixed-top bg-beige">
+            <div class="container">
+                <a class="navbar-brand mr-4" href="/">Stocks Correlations</a>
+                <!-- Toggle button -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <!-- Collapsible wrapper -->
+                <div class="collapse navbar-collapse" id="navbarToggle">
+                    <div class="navbar-nav">
+                        <a class="nav-item nav-link" href="/">Home</a>
+                        <a class="nav-item nav-link" href="/about">About</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!-- End of navigation bar -->
 
-    {% block content %}{% endblock %}
+    <main role="main" class="container">
+        {% block content %}{% endblock %}
+    </main>
 
-    <!-- Bootstrap JS -->
+    <!-- Bootstrap JS (Bundle includes Popper.js) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
