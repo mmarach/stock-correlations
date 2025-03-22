@@ -11,32 +11,37 @@
 </head>
 <body class="container mt-4">
 
-    <h2 class="text-center mb-4">Enter Stock Tickers</h2>
-
-    <form id="tickerForm" method="post" action="{{ url_for('submit') }}">
-        {{ form.hidden_tag() }}  <!-- CSRF Token and hidden fields -->
-
-        <div class="d-flex flex-wrap align-items-end gap-3">
-            <div class="w-auto">
-                {{ form.tickerInput.label(class="form-control-label") }}
-                {{ form.tickerInput(class_="form-control", id="tickerInput", placeholder="Enter ticker and press Enter") }}
+    <h3 class="text-center mb-4">Stocks Correlations</h3>
+    <div class="controls-section">
+        <form id="tickerForm" method="post" action="{{ url_for('submit') }}">
+            {{ form.hidden_tag() }}  <!-- CSRF Token and hidden fields -->
+            <fieldset class="d-flex flex-wrap align-items-end gap-3">
+                <div class="form-group w-auto">
+                    {{ form.tickerInput.label(class="form-control-label") }}
+                    {{ form.tickerInput(class_="form-control", id="tickerInput", placeholder="Enter ticker and press Enter") }}
+                </div>
+                <div class="form-group">
+                    {{ form.start_date.label(class="form-control-label") }}
+                    {{ form.start_date(class_="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.end_date.label(class="form-control-label") }}
+                    {{ form.end_date(class_="form-control") }}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class_="btn btn-primary mt-3") }}
+                <button type="button" id="clearButton" class="btn btn-secondary mt-3 ms-2">Clear</button>
             </div>
-            <div>
-                {{ form.start_date.label(class="form-control-label") }}
-                {{ form.start_date(class_="form-control") }}
-            </div>
-            <div>
-                {{ form.end_date.label(class="form-control-label") }}
-                {{ form.end_date(class_="form-control") }}
-            </div>
+        </form>
+        <div class="border-top pt-2 mt-3">
+            <p id="tickersList" class="form-label text-muted">Tickers selected so far: </p>
         </div>
-
-        {{ form.submit(class_="btn btn-primary mt-3") }}
-        <button type="button" id="clearButton" class="btn btn-secondary mt-3 ms-2">Clear</button>
-    </form>
-
-    <p id="tickersList" class="form-label">Tickers selected so far: </p>
-    <div id="correlationResults" class="mt-4"></div>
+    </div>
+    </div>
+    <div>
+        <div id="correlationResults" class="mt-4"></div>
+    </div>
 
     <script>
         let tickers = [];

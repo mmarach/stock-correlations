@@ -8,19 +8,17 @@ h1, h2, h3, h4, h5, h6 {
   color: #444444;
 }
 
-table.data {
-    width: 50%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
-
-table {
-    width: 50%;
-    border-collapse: collapse;
-    margin-top: 10px;
+.controls-section {
+  background: #f5f5f5;
+  padding: 10px 20px;
+  border: 1px solid #9c9c9c;
+  border-radius: 3px;
+  margin-bottom: 20px;
 }
 
 .corr-table {
+    margin-top: 10px;
+    width: 50%;
     font-size: 11pt;
     font-family: Arial;
     border-collapse: collapse;
@@ -28,7 +26,7 @@ table {
 }
 
 .corr-table td, th {
-    border: 1px solid black;
+    border: 1px solid #9c9c9c;
     padding: 5px;
     text-align: center; /* Center align text */
     white-space: nowrap; /* Prevent text wrapping */
@@ -36,7 +34,18 @@ table {
 }
 
 .corr-table tr:nth-child(even) {
-    background: #E0E0E0;
+    background: #f5f5f5;
+}
+
+.corr-table th {
+    background-color: #d9dddc; /* Light blue color */
+    color: #48494b;
+}
+
+/* Light blue background for the entire first column */
+.corr-table th:first-child {
+    background-color: #d9dddc; /* Light blue color */
+    color: #48494b;
 }
 
 .corr-table tr:hover {
