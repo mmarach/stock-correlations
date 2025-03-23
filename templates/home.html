@@ -48,7 +48,10 @@
                 let ticker = this.value.trim().toUpperCase();
                 let errorDiv = document.getElementById("tickerError");
 
-                if (!ticker) return;
+                if (!ticker) {
+                    errorDiv.style.display = "none";
+                    return;
+                }
 
                 fetch("{{ url_for('verify_ticker') }}", {
                     method: "POST",
@@ -56,18 +59,16 @@
                     body: JSON.stringify({ ticker: ticker })
                 })
                 .then(response => {
-                    if (response.ok) {
-                        return response.json(); // If valid, the response is JSON
-                    } else {
-                        return response.text(); // If invalid, the response is an HTML error message
+                    if (!response.ok) {
+                        return response.text(); // If invalid, return HTML error message
                     }
                 })
                 .then(data => {
-                    if (typeof data === "string") {
+                    if (data) {  // data is only set when the response was not ok
                         errorDiv.innerHTML = data;
                         errorDiv.style.display = "block";
                     } else {
-                        // Valid ticker case
+                        // Valid ticker case (response was OK)
                         errorDiv.style.display = "none";
                         if (!tickers.includes(ticker)) {
                             tickers.push(ticker);
@@ -88,14 +89,6 @@
 
         document.getElementById("tickerForm").addEventListener("submit", function(event) {
             event.preventDefault();
-
-            let startDate = document.getElementById("start_date").value;
-            let endDate = document.getElementById("end_date").value;
-
-            if (startDate > endDate) {
-                alert("Please select a start and end date.");
-                return;
-            }
 
             let tickersField = document.getElementById("tickers");
             tickersField.value = JSON.stringify(tickers);

@@ -1,7 +1,9 @@
+from datetime import date
+
 import json
 import pandas as pd
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request
 
 from forms import TickerForm
 
@@ -31,39 +33,38 @@ def about():
 @app.route('/submit', methods=['POST'])
 def submit():
     form = TickerForm()
-    if form.validate_on_submit():
-        tickers = json.loads(form.tickers.data)
-        start_date = form.start_date.data
-        end_date = form.end_date.data
-        use_returns = form.use_returns.data
-        use_adjusted = form.use_adjusted.data
+    # if form.validate_on_submit():
+    tickers = json.loads(form.tickers.data)
+    if len(tickers) < 2:
+        return input_error("Invalid input: Two or more tickers have to be provided.")
 
-        correlation_matrix = get_correlations_matrix(tickers, start_date, end_date, use_adjusted, use_returns)
-        return correlation_matrix.to_html(classes="corr-table")  # Directly return the HTML table
+    start_date = form.start_date.data
+    end_date = form.end_date.data
+    if end_date < start_date or end_date > date.today():
+        return input_error("Invalid input: Make sure the end date is after the start date and is not a future date.")
 
-    # If form is invalid, return the form's errors
-    errors = []
-    for field_name, field_errors in form.errors.items():
-        for error in field_errors:
-            errors.append(f"{field_name}: {error}")
+    use_returns = form.use_returns.data
+    use_adjusted = form.use_adjusted.data
 
-    # Return a detailed error message
-    return "<p>" + "<br>".join(errors) + "</p>", 400
+    correlation_matrix = get_correlations_matrix(tickers, start_date, end_date, use_adjusted, use_returns)
+    return correlation_matrix.to_html(classes="corr-table")  # Directly return the HTML table
 
 
 @app.route('/verify', methods=['POST'])
 def verify_ticker():
-    ticker = request.json.get("ticker", "").strip().upper()
+    ticker = request.json.get("ticker", "")
 
     if not ticker.isalpha():
-        error_message = "Invalid ticker: Make sure the ticker contains only alpha characters and no spaces."
-        return render_template("error.html", error_message=error_message), 400
+        return input_error("Invalid ticker: Make sure the ticker contains only alpha characters and no spaces.")
 
     if not check_ticker_in_yf(ticker):
-        error_message = "Invalid ticker: Ticker isn't available in Yahoo Finance."
-        return render_template("error.html", error_message=error_message), 400
+        return input_error("Invalid ticker: Ticker isn't available in Yahoo Finance.")
 
-    return jsonify({"valid": True})
+    return ""
+
+
+def input_error(error_message: str) -> tuple[str, int]:
+    return render_template("error.html", error_message=error_message), 400
 
 
 if __name__ == '__main__':
