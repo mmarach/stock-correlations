@@ -1,11 +1,6 @@
-# import sys
-# import os
-# sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 import pytest
 
 from stock_correlations import create_app
-
 
 
 class MockConfig:
@@ -13,26 +8,24 @@ class MockConfig:
 
 
 @pytest.fixture
-def client():
-    """A test client for the app."""
+def mock_client():
     app = create_app(MockConfig)
     app.config.update(TESTING=True)
 
-    with app.app_context():  # ✅ Push an application context explicitly
-        with app.test_client() as client:
-            yield client
+    with app.test_client() as client:
+        yield client
 
 
-def test_home(client):
+def test_home(mock_client):
     """Test the home route."""
-    response = client.get('/')
+    response = mock_client.get('/')
     assert response.status_code == 200
     assert response.content_type == "text/html; charset=utf-8"
 
 
-def test_about(client):
+def test_about(mock_client):
     """Test the home route."""
-    response = client.get('/about')
+    response = mock_client.get('/about')
     assert response.status_code == 200
     assert response.content_type == "text/html; charset=utf-8"
 
