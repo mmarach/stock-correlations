@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
     <div class="controls-section">
-        <form id="tickerForm" method="post" action="{{ url_for('submit') }}">
+        <form id="corrInputForm" method="post" action="{{ url_for('submit') }}">
             {{ form.hidden_tag() }}  <!-- CSRF token and hidden fields -->
             <fieldset class="d-flex flex-wrap align-items-end gap-3">
                 <div class="form-group w-auto">
@@ -32,22 +32,23 @@
             </div>
         </form>
         <div class="border-top pt-2 mt-3">
-            <p id="tickersList" class="form-label text-muted">Selected tickers: </p>
+            <p id="selectedTickersDisplay" class="form-label text-muted">Selected tickers: </p>
         </div>
     </div>
     <div>
-        <div id="correlationResults" class="mt-4"></div>
+        <div id="correlationMatrix" class="mt-4"></div>
     </div>
 
     <script>
         let tickers = [];
 
+        // Event listener for when the user presses "Enter" in the ticker input field
         document.getElementById("tickerInput").addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
                 event.preventDefault();
 
                 let ticker = this.value.trim().toUpperCase();
-                let tickerList = document.getElementById("tickersList")
+                let selectedTickersDisplay = document.getElementById("selectedTickersDisplay")
                 let error = document.getElementById("error");
 
                 if (!ticker) {
@@ -55,10 +56,11 @@
                     return;
                 }
 
+                // Make a POST request to verify the submitted ticker's validity
                 fetch("{{ url_for('verify_ticker') }}", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ ticker: ticker })
+                    body: JSON.stringify({ ticker: ticker  })
                 })
                 .then(response => {
                     if (!response.ok) {
@@ -67,13 +69,16 @@
                 })
                 .then(data => {
                     if (data) {
+                        // If the response is not ok, display the returned error message
                         error.innerHTML = data;
                         error.style.display = "block";
                     } else {
+                        // Otherwise, if the ticker isn't already in the selected tickers list,
+                        // add it to the list and update the display
                         error.style.display = "none";
                         if (!tickers.includes(ticker)) {
                             tickers.push(ticker);
-                            tickerList.innerText = "Selected tickers: " + tickers.join(", ");
+                            selectedTickersDisplay.innerText = "Selected tickers: " + tickers.join(", ");
                             this.value = "";
                         }
                     }
@@ -82,30 +87,38 @@
             }
         });
 
+        // Event listener for when the user clicks the "Clear" button
         document.getElementById("clearButton").addEventListener("click", function() {
+            // Clear the selected tickers and the selected tickers display
             tickers = [];
-            document.getElementById("tickersList").innerText = "Selected tickers: ";
+            document.getElementById("selectedTickersDisplay").innerText = "Selected tickers: ";
             document.getElementById("tickerInput").value = "";
         });
 
-        document.getElementById("tickerForm").addEventListener("submit", function(event) {
+        // Event listener for when the user submits the form
+        document.getElementById("corrInputForm").addEventListener("submit", function(event) {
             event.preventDefault();
 
-            let tickersField = document.getElementById("tickers");
-            tickersField.value = JSON.stringify(tickers);
+            let selectedTickers = document.getElementById("tickers");
+            let correlationMatrix = document.getElementById("correlationMatrix")
             let error = document.getElementById("error");
+            
+            selectedTickers.value = JSON.stringify(tickers);
 
+            // Make a POST request to submit the selected tickers
             fetch("{{ url_for('submit') }}", {
                 method: "POST",
                 body: new FormData(this),
             })
             .then(response => response.text().then(html => {
                 if (!response.ok) {
+                    // If the response is not ok, display the returned error message
                     error.innerHTML = html;
                     error.style.display = "block";
                 } else {
+                    // Otherwise, update the correlation matrix display
                     error.style.display = "none";
-                    document.getElementById("correlationResults").innerHTML = html;
+                    correlationMatrix.innerHTML = html;
                 }
             }))
             .catch(error => console.error("Error:", error));

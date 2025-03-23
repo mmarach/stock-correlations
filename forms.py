@@ -3,7 +3,7 @@ from wtforms import HiddenField, SubmitField, DateField, BooleanField
 from wtforms.validators import DataRequired
 
 
-class TickerForm(FlaskForm):
+class CorrInputForm(FlaskForm):
     start_date = DateField(label="Start Date", format='%Y-%m-%d', validators=[DataRequired()])
     end_date = DateField(label="End Date", format='%Y-%m-%d', validators=[DataRequired()])
     use_returns = BooleanField(label="Use Price Returns", default=True)

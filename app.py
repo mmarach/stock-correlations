@@ -5,7 +5,7 @@ import pandas as pd
 
 from flask import Flask, render_template, request
 
-from forms import TickerForm
+from forms import CorrInputForm
 
 from data.correlations import get_correlations_matrix, check_ticker_in_yf
 
@@ -20,7 +20,7 @@ app.config['WTF_CSRF_ENABLED'] = False
 @app.route('/home')
 def home():
     """Show the main Home page."""
-    form = TickerForm()
+    form = CorrInputForm()
     return render_template('home.html', form=form)
 
 
@@ -32,8 +32,8 @@ def about():
 
 @app.route('/submit', methods=['POST'])
 def submit():
-    form = TickerForm()
-    # if form.validate_on_submit():
+    form = CorrInputForm()
+
     tickers = json.loads(form.tickers.data)
     if len(tickers) < 2:
         return input_error("Invalid input: Two or more tickers have to be provided.")

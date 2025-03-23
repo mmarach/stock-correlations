@@ -1,50 +1,34 @@
 {% extends "layout.html" %}
 {% block content %}
     <div class="content-section">
-        <h3 class="section-heading border-bottom">About Diary Dash</h3>
+        <h3 class="section-heading border-bottom">About Stock Correlations App</h3>
         <p class="text-muted" style="text-align: justify;">
-            Diary Dash is a no-nonsense events planning and management portal.
+            Stock Correlations is a simple tool which calculates the correlations between selected stocks.
         </p>
-        <h5 class="section-heading mt-4 mb-2">Adding New Events</h5>
+        <h5 class="section-heading mt-4 mb-2">Computing Correlations</h5>
         <p class="text-muted" style="text-align: justify;">
-            Diary Dash allows you to add events to your diary and keep track of them, easily knowing what the next upcoming events are!
-            To add a new event, simply click on <span class="highlighted-text">Add a New Event</span> in <span class="highlighted-text">Manage My Diary</span> panel,
-            specify the event details, and click on <span class="highlighted-text">Add</span>.
+            To compute correlations, start by entering the stock tickers of interest using the
+            <span class="fw-bold">Add Ticker</span> field. Each ticker must be valid and available in the Yahoo Finance
+            database. After adding the tickers, specify the date range for the calculation, then click
+            <span class="fw-bold">Submit</span> to generate a correlation matrix displaying the computed values.
         </p>
-        <h5 class="section-heading mt-4 mb-2">Viewing and Managing Upcoming Events</h5>
+        <h5 class="section-heading mt-4 mb-2">Additional Calculation Options</h5>
         <p class="text-muted" style="text-align: justify;">
-            To view all of your upcoming events, click on <span class="highlighted-text">Upcoming Events</span>.
-            For each event you will see a small indicator showing in how many days the event is due.
-            If the event is due in less than a week, the indicator will appear yellow. Otherwise, the indicator will appear grey.
+            You can choose whether to calculate correlations using daily returns or raw prices. By default,
+            daily returns are used, but you can switch to raw prices by unchecking the
+            <span class="fw-bold">Use Price Returns</span> option.
             <br><br>
-            To change the event’s details, or to delete it altogether, click on the event’s title.
-            If you want to view all upcoming events of the same type as the event of interest to you, simply click on the event’s <span class="highlighted-text">Type</span>.
+            Additionally, you can decide whether to adjust the underlying price data for applicable corporate actions
+            such as stock splits and dividend distributions. To use unadjusted price data, uncheck the
+            <span class="fw-bold">Adjust for Corporate Actions</span> option.
         </p>
-        <h5 class="section-heading mt-4 mb-2">Viewing and Managing Past Events</h5>
+        <h5 class="section-heading mt-4 mb-2">Yahoo Finance API</h5>
         <p class="text-muted" style="text-align: justify;">
-            To view your past events, click on <span class="highlighted-text">Past Events</span>.
-            Diary Dash allows you to rate your past events, so that you can easily know which type of events you enjoy the most and plan accordingly!
-            To rate a past event, click on its title and click on <span class="highlighted-text">Rate</span>.
-            You can then assign the event a rating between one and five.
+            Stock Correlations utilises Yahoo's publicly available APIs to obtain historical price data from
+            Yahoo Finance using which the correlations are computed.
             <br><br>
-            For past events which have been rated already, you will see a small indicator showing their rating.
-            The indicator’s colour will depend on the event’s rating so that you can easily tell whether you enjoyed a given event!
-        </p>
-        <h5 class="section-heading mt-4 mb-2">Getting Activity Suggestions</h5>
-        <p class="text-muted" style="text-align: justify;">
-            Don’t worry if you don’t have any ideas for any fun activities, as Diary Dash can help you find things to do!
-            To get an activity suggestion based on criteria specified by you, click on <span class="highlighted-text">Suggest an Activity</span> in <span class="highlighted-text">Manage My Diary</span> panel.
-            <br><br>
-            If you’d like a completely random suggestion, check out <span class="highlighted-text">I’m Feeling Lucky!</span> and see what you get!
-        </p>
-        <h5 class="section-heading mt-4 mb-2">Bored API</h5>
-        <p class="text-muted" style="text-align: justify;">
-            Diary Dash utilises Bored API to generate activity suggestions. Every generated activity has an accessibility factor and a price factor assigned to it.
-            <br><br>
-            Accessibility factor describes how simple or possible an event is to do, with zero being the most and one being the least accessible.
-            Price factor describes the potential monetary cost the activity involves, with zero being free and one being very expensive.
-            <br><br>
-            For more information on Bored API, see <a href="https://www.boredapi.com/documentation" target="_blank">their official documentation</a>.
+            For more information on Yahoo's APIs, see
+            <a href="https://developer.yahoo.com/api/" target="_blank" class="text-decoration-none">their official documentation</a>.
         </p>
     </div>
 {% endblock content %}
