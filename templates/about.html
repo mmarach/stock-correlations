@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+        <h3 class="section-heading border-bottom">About Diary Dash</h3>
+        <p class="text-muted" style="text-align: justify;">
+            Diary Dash is a no-nonsense events planning and management portal.
+        </p>
+        <h5 class="section-heading mt-4 mb-2">Adding New Events</h5>
+        <p class="text-muted" style="text-align: justify;">
+            Diary Dash allows you to add events to your diary and keep track of them, easily knowing what the next upcoming events are!
+            To add a new event, simply click on <span class="highlighted-text">Add a New Event</span> in <span class="highlighted-text">Manage My Diary</span> panel,
+            specify the event details, and click on <span class="highlighted-text">Add</span>.
+        </p>
+        <h5 class="section-heading mt-4 mb-2">Viewing and Managing Upcoming Events</h5>
+        <p class="text-muted" style="text-align: justify;">
+            To view all of your upcoming events, click on <span class="highlighted-text">Upcoming Events</span>.
+            For each event you will see a small indicator showing in how many days the event is due.
+            If the event is due in less than a week, the indicator will appear yellow. Otherwise, the indicator will appear grey.
+            <br><br>
+            To change the event’s details, or to delete it altogether, click on the event’s title.
+            If you want to view all upcoming events of the same type as the event of interest to you, simply click on the event’s <span class="highlighted-text">Type</span>.
+        </p>
+        <h5 class="section-heading mt-4 mb-2">Viewing and Managing Past Events</h5>
+        <p class="text-muted" style="text-align: justify;">
+            To view your past events, click on <span class="highlighted-text">Past Events</span>.
+            Diary Dash allows you to rate your past events, so that you can easily know which type of events you enjoy the most and plan accordingly!
+            To rate a past event, click on its title and click on <span class="highlighted-text">Rate</span>.
+            You can then assign the event a rating between one and five.
+            <br><br>
+            For past events which have been rated already, you will see a small indicator showing their rating.
+            The indicator’s colour will depend on the event’s rating so that you can easily tell whether you enjoyed a given event!
+        </p>
+        <h5 class="section-heading mt-4 mb-2">Getting Activity Suggestions</h5>
+        <p class="text-muted" style="text-align: justify;">
+            Don’t worry if you don’t have any ideas for any fun activities, as Diary Dash can help you find things to do!
+            To get an activity suggestion based on criteria specified by you, click on <span class="highlighted-text">Suggest an Activity</span> in <span class="highlighted-text">Manage My Diary</span> panel.
+            <br><br>
+            If you’d like a completely random suggestion, check out <span class="highlighted-text">I’m Feeling Lucky!</span> and see what you get!
+        </p>
+        <h5 class="section-heading mt-4 mb-2">Bored API</h5>
+        <p class="text-muted" style="text-align: justify;">
+            Diary Dash utilises Bored API to generate activity suggestions. Every generated activity has an accessibility factor and a price factor assigned to it.
+            <br><br>
+            Accessibility factor describes how simple or possible an event is to do, with zero being the most and one being the least accessible.
+            Price factor describes the potential monetary cost the activity involves, with zero being free and one being very expensive.
+            <br><br>
+            For more information on Bored API, see <a href="https://www.boredapi.com/documentation" target="_blank">their official documentation</a>.
+        </p>
+    </div>
+{% endblock content %}

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, jsonify
+from flask import Flask, render_template
 from forms import TickerForm
 import json
 import pandas as pd
@@ -12,10 +12,18 @@ app = Flask(__name__)
 app.config['WTF_CSRF_ENABLED'] = False
 
 
-@app.route('/', methods=['GET'])
-def index():
+@app.route('/')
+@app.route('/home')
+def home():
+    """Show the main Home page."""
     form = TickerForm()
-    return render_template('index.html', form=form)
+    return render_template('home.html', form=form)
+
+
+@app.route('/about')
+def about():
+    """Show an overview on how to use and navigate Diary Dash."""
+    return render_template('about.html', title='About')
 
 
 @app.route('/submit', methods=['POST'])
