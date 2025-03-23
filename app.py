@@ -40,8 +40,10 @@ def submit():
 
     start_date = form.start_date.data
     end_date = form.end_date.data
-    if end_date < start_date or end_date > date.today():
-        return input_error("Invalid input: Make sure the end date is after the start date and is not a future date.")
+    if end_date <= start_date:
+        return input_error("Invalid input: The end date must be later than the start date.")
+    elif end_date > date.today():
+        return input_error("Invalid input: The end date cannot be in the future.")
 
     use_returns = form.use_returns.data
     use_adjusted = form.use_adjusted.data
@@ -58,7 +60,7 @@ def verify_ticker():
         return input_error("Invalid ticker: Make sure the ticker contains only alpha characters and no spaces.")
 
     if not check_ticker_in_yf(ticker):
-        return input_error("Invalid ticker: Ticker isn't available in Yahoo Finance.")
+        return input_error("Invalid ticker: The ticker isn't available in Yahoo Finance.")
 
     return ""
 

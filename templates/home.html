@@ -25,7 +25,7 @@
                     {{ form.use_adjusted(class_="bootstrap-switch-square") }}
                 </div>
             </fieldset>
-            <div id="tickerError" style="display: none;"></div>
+            <div id="error" style="display: none;"></div>
             <div class="form-group">
                 {{ form.submit(class_="btn btn-primary mt-3") }}
                 <button type="button" id="clearButton" class="btn btn-secondary mt-3 ms-2">Clear</button>
@@ -45,11 +45,13 @@
         document.getElementById("tickerInput").addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
                 event.preventDefault();
+
                 let ticker = this.value.trim().toUpperCase();
-                let errorDiv = document.getElementById("tickerError");
+                let tickerList = document.getElementById("tickersList")
+                let error = document.getElementById("error");
 
                 if (!ticker) {
-                    errorDiv.style.display = "none";
+                    error.style.display = "none";
                     return;
                 }
 
@@ -60,20 +62,19 @@
                 })
                 .then(response => {
                     if (!response.ok) {
-                        return response.text(); // If invalid, return HTML error message
+                        return response.text();
                     }
                 })
                 .then(data => {
-                    if (data) {  // data is only set when the response was not ok
-                        errorDiv.innerHTML = data;
-                        errorDiv.style.display = "block";
+                    if (data) {
+                        error.innerHTML = data;
+                        error.style.display = "block";
                     } else {
-                        // Valid ticker case (response was OK)
-                        errorDiv.style.display = "none";
+                        error.style.display = "none";
                         if (!tickers.includes(ticker)) {
                             tickers.push(ticker);
-                            document.getElementById("tickersList").innerText = "Selected tickers: " + tickers.join(", ");
-                            document.getElementById("tickerInput").value = "";
+                            tickerList.innerText = "Selected tickers: " + tickers.join(", ");
+                            this.value = "";
                         }
                     }
                 })
@@ -92,15 +93,21 @@
 
             let tickersField = document.getElementById("tickers");
             tickersField.value = JSON.stringify(tickers);
+            let error = document.getElementById("error");
 
             fetch("{{ url_for('submit') }}", {
                 method: "POST",
                 body: new FormData(this),
             })
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById("correlationResults").innerHTML = html;
-            })
+            .then(response => response.text().then(html => {
+                if (!response.ok) {
+                    error.innerHTML = html;
+                    error.style.display = "block";
+                } else {
+                    error.style.display = "none";
+                    document.getElementById("correlationResults").innerHTML = html;
+                }
+            }))
             .catch(error => console.error("Error:", error));
         });
     </script>
