@@ -1,14 +1,16 @@
-from flask import Flask, render_template
-from forms import TickerForm
 import json
 import pandas as pd
 
-from data.correlations import get_correlations_matrix
+from flask import Flask, render_template, request, jsonify
+
+from forms import TickerForm
+
+from data.correlations import get_correlations_matrix, check_ticker_in_yf
+
 
 pd.options.display.float_format = "{:,.2f}".format
 
 app = Flask(__name__)
-
 app.config['WTF_CSRF_ENABLED'] = False
 
 
@@ -47,6 +49,21 @@ def submit():
 
     # Return a detailed error message
     return "<p>" + "<br>".join(errors) + "</p>", 400
+
+
+@app.route('/verify', methods=['POST'])
+def verify_ticker():
+    ticker = request.json.get("ticker", "").strip().upper()
+
+    if not ticker.isalpha():
+        error_message = "Invalid ticker: Make sure the ticker contains only alpha characters and no spaces."
+        return render_template("error.html", error_message=error_message), 400
+
+    if not check_ticker_in_yf(ticker):
+        error_message = "Invalid ticker: Ticker isn't available in Yahoo Finance."
+        return render_template("error.html", error_message=error_message), 400
+
+    return jsonify({"valid": True})
 
 
 if __name__ == '__main__':

@@ -8,7 +8,7 @@ class TickerForm(FlaskForm):
     end_date = DateField(label="End Date", format='%Y-%m-%d', validators=[DataRequired()])
     use_returns = BooleanField(label="Use Price Returns", default=True)
     use_adjusted = BooleanField(label="Use Adjusted Prices", default=True)
-    tickers = HiddenField(validators=[DataRequired()])  # Hidden field to store all tickers
+    tickers = HiddenField()  # Hidden field to store all tickers
     submit = SubmitField(label='Submit')
 
     def validate_end_date(self, filed):

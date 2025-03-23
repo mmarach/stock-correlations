@@ -20,24 +20,29 @@ def get_correlations_matrix(
     @param use_returns: If True, computes correlation on daily returns. Otherwise, raw price values are used.
     @return: Dataframe with correlations between the input tickers.
     """
-    stock_prices = get_stock_prices(tickers, start_dt, end_dt, use_adjusted)
-    correlations = calculate_correlations(stock_prices, use_returns)
+    data = _fetch_stock_prices(tickers, start_dt, end_dt, use_adjusted)
+
+    if use_returns:
+        data = data.pct_change()
+    correlations = data.corr()
 
     correlations.index.name = None
     return correlations
 
 
-def get_stock_prices(tickers: list[str], start_dt: date, end_dt: date, use_adjusted: bool) -> pd.DataFrame:
+def _fetch_stock_prices(tickers: list[str], start_dt: date, end_dt: date, use_adjusted: bool) -> pd.DataFrame:
     raw = yf.download(tickers, start=start_dt, end=end_dt, progress=False, auto_adjust=False)
     prices = raw['Adj Close'] if use_adjusted else raw['Close']
     return prices
 
 
-def calculate_correlations(data: pd.DataFrame, use_returns: bool) -> pd.DataFrame:
-    if use_returns:
-        data = data.pct_change()
-    correlations = data.corr()
-    return correlations
+def check_ticker_in_yf(ticker: str) -> bool:
+    try:
+        yf_ticker = yf.Ticker(ticker)
+        yf_ticker_info = yf_ticker.get_info()
+        return bool(yf_ticker_info)
+    except AttributeError:
+        return False
 
 
 if __name__ == '__main__':
