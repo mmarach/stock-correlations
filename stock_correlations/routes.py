@@ -2,28 +2,28 @@ from datetime import date
 
 import json
 
-from flask import render_template, request
+from flask import render_template, request, current_app
 
-from stock_correlations import app
+# from stock_correlations import app
 from stock_correlations.forms import CorrInputForm
 from stock_correlations.data import get_correlations_matrix, check_ticker_in_yf
 
 
-@app.route('/')
-@app.route('/home')
+@current_app.route('/')
+@current_app.route('/home')
 def home():
     """Show the main Home page."""
     form = CorrInputForm()
     return render_template('home.html', form=form)
 
 
-@app.route('/about')
+@current_app.route('/about')
 def about():
     """Show an overview on how to use and navigate Diary Dash."""
     return render_template('about.html', title='About')
 
 
-@app.route('/submit', methods=['POST'])
+@current_app.route('/submit', methods=['POST'])
 def submit():
     form = CorrInputForm()
 
@@ -45,7 +45,7 @@ def submit():
     return correlation_matrix.to_html(classes="corr-table")  # Directly return the HTML table
 
 
-@app.route('/verify', methods=['POST'])
+@current_app.route('/verify', methods=['POST'])
 def verify_ticker():
     ticker = request.json.get("ticker", "")
 

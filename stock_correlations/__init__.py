@@ -4,13 +4,18 @@ import pandas as pd
 
 from flask import Flask
 
+from stock_correlations.config import Config
+
 
 pd.options.display.float_format = "{:,.2f}".format
 
-app = Flask(__name__)
 
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
-# app.config['WTF_CSRF_ENABLED'] = False
+def create_app(app_config=Config):
+    app = Flask(__name__)
 
+    app.config.from_object(app_config)
 
-from stock_correlations import routes
+    with app.app_context():
+        from stock_correlations import routes
+
+    return app
