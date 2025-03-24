@@ -1,3 +1,5 @@
+from typing import Any, Optional
+
 from datetime import date
 
 import pandas as pd
@@ -36,13 +38,13 @@ def _fetch_stock_prices(tickers: list[str], start_dt: date, end_dt: date, use_ad
     return prices
 
 
-def check_ticker_in_yf(ticker: str) -> bool:
+def get_yf_ticker_info(ticker: str) -> Optional[dict[str, Any]]:
     try:
         yf_ticker = yf.Ticker(ticker)
         yf_ticker_info = yf_ticker.get_info()
-        return bool(yf_ticker_info)
+        return yf_ticker_info
     except AttributeError:
-        return False
+        return None
 
 
 if __name__ == '__main__':

@@ -38,6 +38,12 @@ h1, h2, h3, h4, h5, h6 {
     padding: 10px 20px;
 }
 
+.ticker-input {
+    min-width: 240px;
+    padding-right: 10px;
+    width: auto;
+}
+
 /* Correlations matrix styling */
 
 .corr-table {

@@ -1,3 +1,5 @@
+from typing import Optional
+
 from datetime import date
 
 import json
@@ -5,57 +7,67 @@ import json
 from flask import render_template, request
 
 from stock_correlations.forms import CorrInputForm
-from stock_correlations.data import get_correlations_matrix, check_ticker_in_yf
+from stock_correlations.data import get_correlations_matrix, get_yf_ticker_info
 
 
 def register_routes(app):
     @app.route('/')
     @app.route('/home')
     def home():
-        """Show the main Home page."""
+        """Render the home page."""
         form = CorrInputForm()
         return render_template('home.html', form=form)
 
 
     @app.route('/about')
     def about():
-        """Show an overview on how to use and navigate Diary Dash."""
+        """Render the about page with overview of the app."""
         return render_template('about.html', title='About')
 
 
     @app.route('/submit', methods=['POST'])
     def submit():
+        """Process the submitted form, validate input, and return a correlation matrix as HTML table."""
         form = CorrInputForm()
 
         tickers = json.loads(form.tickers.data)
-        if len(tickers) < 2:
-            return input_error("Invalid input: Two or more tickers have to be provided.")
-
         start_date = form.start_date.data
         end_date = form.end_date.data
-        if end_date <= start_date:
-            return input_error("Invalid input: The end date must be later than the start date.")
-        elif end_date > date.today():
-            return input_error("Invalid input: The end date cannot be in the future.")
+
+        error = validate_form_input(tickers, start_date, end_date)
+        if error:
+            return input_error(error)
 
         use_returns = form.use_returns.data
         use_adjusted = form.use_adjusted.data
 
         correlation_matrix = get_correlations_matrix(tickers, start_date, end_date, use_adjusted, use_returns)
-        return correlation_matrix.to_html(classes="corr-table")  # Directly return the HTML table
+        return correlation_matrix.to_html(classes="corr-table")
 
 
     @app.route('/verify', methods=['POST'])
     def verify_ticker():
+        """Verify that the provided ticker is valid."""
         ticker = request.json.get("ticker", "")
 
         if not ticker.isalpha():
             return input_error("Invalid ticker: Make sure the ticker contains only alpha characters and no spaces.")
 
-        if not check_ticker_in_yf(ticker):
-            return input_error("Invalid ticker: The ticker isn't available in Yahoo Finance.")
+        yf_ticker_info = get_yf_ticker_info(ticker)
+        if not yf_ticker_info or 'regularMarketPrice' not in yf_ticker_info:
+            return input_error("Invalid ticker: The ticker is not available in Yahoo Finance.")
 
         return ""
+
+
+def validate_form_input(tickers: list[str], start_date: date, end_date: date) -> Optional[str]:
+    if len(tickers) < 2:
+        return "Invalid input: Two or more tickers have to be provided."
+    if end_date <= start_date:
+        return "Invalid input: The end date must be later than the start date."
+    if end_date > date.today():
+        return "Invalid input: The end date cannot be in the future."
+    return None
 
 
 def input_error(error_message: str) -> tuple[str, int]:
