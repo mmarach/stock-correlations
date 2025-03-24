@@ -13,21 +13,21 @@ from stock_correlations.data import get_correlations_matrix, get_yf_ticker_info
 def register_routes(app):
     """Register all routes for the Flask app."""
 
-    @app.route('/')
-    @app.route('/home')
+    @app.route("/")
+    @app.route("/home")
     def home():
         """Render the home page."""
         form = CorrInputForm()
-        return render_template('home.html', form=form)
+        return render_template("home.html", form=form)
 
 
-    @app.route('/about')
+    @app.route("/about")
     def about():
         """Render the about page with overview of the app."""
-        return render_template('about.html', title='About')
+        return render_template("about.html", title="About")
 
 
-    @app.route('/submit', methods=['POST'])
+    @app.route("/submit", methods=["POST"])
     def submit_form():
         """Process the submitted form, validate input, and return a correlation matrix as HTML table."""
         form = CorrInputForm()
@@ -49,7 +49,7 @@ def register_routes(app):
         return correlation_matrix.to_html(classes="corr-table")
 
 
-    @app.route('/verify', methods=['POST'])
+    @app.route("/verify", methods=["POST"])
     def verify_ticker():
         """Verify that the provided ticker is valid."""
         ticker = request.json.get("ticker", "")
@@ -62,7 +62,7 @@ def register_routes(app):
             return _input_error("Invalid ticker: Make sure the ticker contains only alpha characters and no spaces.")
 
         yf_ticker_info = get_yf_ticker_info(ticker)
-        if not yf_ticker_info or 'regularMarketPrice' not in yf_ticker_info:
+        if not yf_ticker_info or "regularMarketPrice" not in yf_ticker_info:
             return _input_error("Invalid ticker: The ticker is not available in Yahoo Finance.")
 
         return ""

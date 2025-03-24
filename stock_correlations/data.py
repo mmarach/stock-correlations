@@ -26,7 +26,7 @@ def get_correlations_matrix(
     """
     data = _fetch_stock_prices(tickers, start_dt, end_dt)
 
-    data = data['Adj Close'] if adjust_for_corp_actions else data['Close']
+    data = data["Adj Close"] if adjust_for_corp_actions else data["Close"]
     if use_price_returns:
         data = data.pct_change()
 
@@ -53,8 +53,8 @@ def _fetch_stock_prices(tickers: list[str], start_dt: date, end_dt: date) -> pd.
     return raw
 
 
-if __name__ == '__main__':
-    stock_tickers = ['AAPL', 'AMZN', 'META', 'GOOG', 'NFLX']
+if __name__ == "__main__":
+    stock_tickers = ["AAPL", "MZN", "META", "GOOG", "NFLX"]
     start_date = date(2024, 12, 1)
     end_date = date(2024, 12, 31)
 

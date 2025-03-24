@@ -35,24 +35,24 @@ def mock_get_correlations_matrix():
 @pytest.fixture
 def mock_get_yf_ticker_info():
     def side_effect(ticker):
-        if ticker == 'BAR':
-            return {'sector': 'Technology'}
-        elif ticker == 'BAZ':
+        if ticker == "BAR":
+            return {"sector": "Technology"}
+        elif ticker == "BAZ":
             return None
-        return {'sector': 'Technology', 'regularMarketPrice': 100.0}
+        return {"sector": "Technology", "regularMarketPrice": 100.0}
 
     with patch(f"{ROOT}.get_yf_ticker_info", side_effect=side_effect):
         yield
 
 
 def test_home(mock_client):
-    response = mock_client.get('/')
+    response = mock_client.get("/")
     assert response.status_code == 200
     assert response.content_type == "text/html; charset=utf-8"
 
 
 def test_about(mock_client):
-    response = mock_client.get('/about')
+    response = mock_client.get("/about")
     assert response.status_code == 200
     assert response.content_type == "text/html; charset=utf-8"
 
@@ -72,8 +72,8 @@ def test_submit_form(mock_client, mock_get_correlations_matrix):
     assert b'class="dataframe corr-table"' in response.data
 
     # Test submitting an invalid date range (end_date before start_date)
-    mock_form['start_date'] = date.today().isoformat()
-    mock_form['end_date'] = (date.today() - timedelta(days=1)).isoformat()
+    mock_form["start_date"] = date.today().isoformat()
+    mock_form["end_date"] = (date.today() - timedelta(days=1)).isoformat()
 
     response = mock_client.post("/submit", json=mock_form)
 
@@ -81,7 +81,7 @@ def test_submit_form(mock_client, mock_get_correlations_matrix):
     assert b"Invalid input: The end date must be later than the start date." in response.data
 
     # Test submitting an invalid (future) end date
-    mock_form['end_date'] = (date.today() + timedelta(days=1)).isoformat()
+    mock_form["end_date"] = (date.today() + timedelta(days=1)).isoformat()
 
     response = mock_client.post("/submit", json=mock_form)
 
@@ -89,7 +89,7 @@ def test_submit_form(mock_client, mock_get_correlations_matrix):
     assert b"Invalid input: The end date cannot be in the future." in response.data
 
     # Test submitting fewer than two tickers
-    mock_form['tickers'] = json.dumps(["FOO"])
+    mock_form["tickers"] = json.dumps(["FOO"])
 
     response = mock_client.post("/submit", json=mock_form)
 
