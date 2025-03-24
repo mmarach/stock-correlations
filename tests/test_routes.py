@@ -45,32 +45,40 @@ def mock_get_yf_ticker_info():
         yield
 
 
-def test_home(mock_client):
-    response = mock_client.get("/")
-    assert response.status_code == 200
-    assert response.content_type == "text/html; charset=utf-8"
-
-
-def test_about(mock_client):
-    response = mock_client.get("/about")
-    assert response.status_code == 200
-    assert response.content_type == "text/html; charset=utf-8"
-
-
-def test_submit_form(mock_client, mock_get_correlations_matrix):
-    # Test submitting valid data and receiving the correlation matrix
-    mock_form = {
+@pytest.fixture
+def mock_form():
+    return {
         "tickers": json.dumps(["FOO", "BAR"]),
         "start_date": (date.today() - timedelta(days=30)).isoformat(),
         "end_date": date.today().isoformat(),
         "use_returns": True,
         "use_adjusted": False
     }
+
+
+def test_home(mock_client):
+    response = mock_client.get("/")
+
+    assert response.status_code == 200
+    assert response.content_type == "text/html; charset=utf-8"
+
+
+def test_about(mock_client):
+    response = mock_client.get("/about")
+
+    assert response.status_code == 200
+    assert response.content_type == "text/html; charset=utf-8"
+
+
+def test_submit_form_valid_data(mock_client, mock_get_correlations_matrix, mock_form):
+    # Test submitting valid data and receiving the correlation matrix
     response = mock_client.post("/submit", json=mock_form)
 
     assert response.status_code == 200
     assert b'class="dataframe corr-table"' in response.data
 
+
+def test_submit_form_invalid_date_range(mock_client, mock_get_correlations_matrix, mock_form):
     # Test submitting an invalid date range (end_date before start_date)
     mock_form["start_date"] = date.today().isoformat()
     mock_form["end_date"] = (date.today() - timedelta(days=1)).isoformat()
@@ -80,6 +88,8 @@ def test_submit_form(mock_client, mock_get_correlations_matrix):
     assert response.status_code == 400
     assert b"Invalid input: The end date must be later than the start date." in response.data
 
+
+def test_submit_form_invalid_end_date(mock_client, mock_get_correlations_matrix, mock_form):
     # Test submitting an invalid (future) end date
     mock_form["end_date"] = (date.today() + timedelta(days=1)).isoformat()
 
@@ -88,6 +98,8 @@ def test_submit_form(mock_client, mock_get_correlations_matrix):
     assert response.status_code == 400
     assert b"Invalid input: The end date cannot be in the future." in response.data
 
+
+def test_submit_insufficient_tickers(mock_client, mock_get_correlations_matrix, mock_form):
     # Test submitting fewer than two tickers
     mock_form["tickers"] = json.dumps(["FOO"])
 
@@ -97,25 +109,31 @@ def test_submit_form(mock_client, mock_get_correlations_matrix):
     assert b"Invalid input: Two or more tickers have to be provided." in response.data
 
 
-def test_verify_ticker(mock_client, mock_get_yf_ticker_info):
+def test_verify_ticker_valid(mock_client, mock_get_yf_ticker_info):
     # Test that a valid ticker returns an empty response
     response = mock_client.post("/verify", json={"ticker": "FOO"})
 
     assert response.status_code == 200
-    assert b"" in response.data
+    assert response.data == b""
 
+
+def test_verify_ticker_duplicate(mock_client, mock_get_yf_ticker_info):
     # Test submitting an already selected ticker
     response = mock_client.post("/verify", json={"ticker": "FOO", "selected_tickers": ["FOO", "BAR"]})
 
     assert response.status_code == 400
     assert b"Ticker FOO has already been selected." in response.data
 
+
+def test_verify_ticker_invalid_format(mock_client, mock_get_yf_ticker_info):
     # Test submitting an invalid ticker containing non-alpha characters
     response = mock_client.post("/verify", json={"ticker": "FOO123"})
 
     assert response.status_code == 400
     assert b"Invalid ticker: Make sure the ticker contains only alpha characters and no spaces." in response.data
 
+
+def test_verify_ticker_missing_data(mock_client, mock_get_yf_ticker_info):
     # Test submitting a ticker without price data in Yahoo Finance's database
     response = mock_client.post("/verify", json={"ticker": "BAR"})
 

@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import patch
 
+import os
 from pathlib import Path
 
 from datetime import date
@@ -11,7 +12,7 @@ from stock_correlations.data import get_correlations_matrix
 
 
 ROOT = "stock_correlations.data"
-RESOURCES = Path("resources")
+RESOURCES = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), "resources")))
 
 
 def read_multiindex_data(filename: str) -> pd.DataFrame:
@@ -41,19 +42,16 @@ def test_get_correlations_matrix(mock_fetch_stock_prices):
     corr = get_correlations_matrix(
         mock_tickers, mock_start_dt, mock_end_dt, adjust_for_corp_actions=True, use_price_returns=True
     )
-
     assert corr.loc["FOO", "BAR"] == pytest.approx(-0.48272668, rel=1e-6)
 
     # Test using unadjusted closing prices and computing correlations on daily returns
     corr = get_correlations_matrix(
         mock_tickers, mock_start_dt, mock_end_dt, adjust_for_corp_actions=False, use_price_returns=True
     )
-
     assert corr.loc["FOO", "BAR"] == pytest.approx(-0.48272723, rel=1e-6)
 
     # Test using unadjusted closing prices and computing correlations on raw price values
     corr = get_correlations_matrix(
         mock_tickers, mock_start_dt, mock_end_dt, adjust_for_corp_actions=False, use_price_returns=False
     )
-
     assert corr.loc["FOO", "BAR"] == pytest.approx(0.8244538, rel=1e-6)
