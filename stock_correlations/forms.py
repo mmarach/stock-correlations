@@ -9,4 +9,4 @@ class CorrInputForm(FlaskForm):
     use_price_returns = BooleanField(label="Use Price Returns", default=True)
     adjust_for_corp_actions = BooleanField(label="Adjust for Corporate Actions", default=True)
     tickers = HiddenField()  # Hidden field to store all tickers
-    submit = SubmitField(label="Submit")
+    submit = SubmitField(label="Compute")
