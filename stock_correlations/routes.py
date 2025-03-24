@@ -51,6 +51,10 @@ def register_routes(app):
     def verify_ticker():
         """Verify that the provided ticker is valid."""
         ticker = request.json.get("ticker", "")
+        selected_tickers = request.json.get("selected_tickers", [])
+
+        if ticker in selected_tickers:
+            return _input_error(f"Ticker {ticker} has already been selected.")
 
         if not ticker.isalpha():
             return _input_error("Invalid ticker: Make sure the ticker contains only alpha characters and no spaces.")
@@ -73,4 +77,4 @@ def _validate_form_input(tickers: list[str], start_date: date, end_date: date) -
 
 
 def _input_error(error_message: str) -> tuple[str, int]:
-    return render_template("error.html", error_message=error_message), 400
+    return error_message, 400

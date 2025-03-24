@@ -104,6 +104,12 @@ def test_verify_ticker(mock_client, mock_get_yf_ticker_info):
     assert response.status_code == 200
     assert b"" in response.data
 
+    # Test submitting an already selected ticker
+    response = mock_client.post("/verify", json={"ticker": "FOO", "selected_tickers": ["FOO", "BAR"]})
+
+    assert response.status_code == 400
+    assert b"Ticker FOO has already been selected." in response.data
+
     # Test submitting an invalid ticker containing non-alpha characters
     response = mock_client.post("/verify", json={"ticker": "FOO123"})
 

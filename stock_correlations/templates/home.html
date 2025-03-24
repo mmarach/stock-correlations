@@ -27,7 +27,9 @@
                     {{ form.use_adjusted(class_="bootstrap-switch-square") }}
                 </div>
             </fieldset>
-            <div id="error" style="display: none;"></div>
+            <div class="content-section">
+                <div id="error" class="error-message"></div>
+            </div>
             <div class="form-group">
                 {{ form.submit(class_="btn btn-primary mt-3") }}
                 <!-- Additional button to reset the selected tickers list -->
@@ -63,7 +65,7 @@
                 fetch("{{ url_for('verify_ticker') }}", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ ticker: ticker  })
+                    body: JSON.stringify({ ticker: ticker, selected_tickers: tickers  })
                 })
                 .then(response => {
                     if (!response.ok) {
@@ -73,18 +75,16 @@
                 .then(data => {
                     if (data) {
                         // If the response is not ok, display the returned error message
-                        error.innerHTML = data;
+                        error.textContent = data;
                         error.style.display = "block";
                     } else {
-                        // Otherwise, if the ticker isn't already in the selected tickers list,
-                        // add it to the list and update the display
+                        // Otherwise, add the ticker to the selected tickers list and update the display
+                        tickers.push(ticker);
+                        tickers.sort();
+
+                        selectedTickersDisplay.innerText = "Selected tickers: " + tickers.join(", ");
                         error.style.display = "none";
-                        if (!tickers.includes(ticker)) {
-                            tickers.push(ticker);
-                            tickers.sort();
-                            selectedTickersDisplay.innerText = "Selected tickers: " + tickers.join(", ");
-                            this.value = "";
-                        }
+                        this.value = "";
                     }
                 })
                 .catch(error => console.error("Error:", error));
@@ -114,15 +114,15 @@
                 method: "POST",
                 body: new FormData(this),
             })
-            .then(response => response.text().then(html => {
+            .then(response => response.text().then(data => {
                 if (!response.ok) {
                     // If the response is not ok, display the returned error message
-                    error.innerHTML = html;
+                    error.textContent = data;
                     error.style.display = "block";
                 } else {
                     // Otherwise, update the correlation matrix display
                     error.style.display = "none";
-                    correlationMatrix.innerHTML = html;
+                    correlationMatrix.innerHTML = data;
                 }
             }))
             .catch(error => console.error("Error:", error));
