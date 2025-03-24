@@ -39,12 +39,13 @@ def get_yf_ticker_info(ticker: str) -> Optional[dict[str, Any]]:
     """Fetches ticker information from Yahoo Finance."""
     # The 'yfinance' library can behave inconsistently, sometimes simply returning None when
     # the specified ticker is not found Yahoo Finance's database, and sometimes raising an
-    # AttributeError. To handle this, we catch the exception and return None.
+    # AttributeError or IndexError instead. To handle this, we catch the exception and
+    # return None.
     try:
         yf_ticker = yf.Ticker(ticker)
         yf_ticker_info = yf_ticker.get_info()
         return yf_ticker_info
-    except AttributeError:
+    except (AttributeError, IndexError):
         return None
 
 
