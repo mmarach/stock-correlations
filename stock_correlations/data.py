@@ -8,43 +8,49 @@ import yfinance as yf
 
 
 def get_correlations_matrix(
-        tickers: list[str], start_dt: date, end_dt: date, use_adjusted: bool = True, use_returns: bool = True
+        tickers: list[str],
+        start_dt: date,
+        end_dt: date,
+        adjust_for_corp_actions: bool = True,
+        use_price_returns: bool = True
 ) -> pd.DataFrame:
     """
-    Computes the correlation matrix for a given set of stock tickers over a specified date range,
-    using stock prices retrieved from Yahoo Finance.
+    Computes the correlation matrix for a given set of stock tickers over a specified date
+    range, using stock prices retrieved from Yahoo Finance.
 
-    @param tickers: List of stock ticker symbols to include in the correlation matrix.
-    @param start_dt: The start date for the calculations date range.
-    @param end_dt: The end date for the calculations date range.
-    @param use_adjusted: If True, adjusted closing prices are used, accounting for applicable splits and dividend distributions.
-                         If False, unadjusted closing prices are used.
-    @param use_returns: If True, computes correlation on daily returns. Otherwise, raw price values are used.
-    @return: Dataframe with correlations between the input tickers.
+    - If 'use_adjusted' is True, the function uses adjusted closing prices, accounting for
+      applicable splits and dividend distributions. Otherwise, unadjusted closing prices
+      are used.
+    - If 'use_returns' is True, the function computes correlation based on daily returns
+      instead of raw prices.
     """
-    data = _fetch_stock_prices(tickers, start_dt, end_dt, use_adjusted)
+    data = _fetch_stock_prices(tickers, start_dt, end_dt)
 
-    if use_returns:
+    data = data['Adj Close'] if adjust_for_corp_actions else data['Close']
+    if use_price_returns:
         data = data.pct_change()
-    correlations = data.corr()
 
+    correlations = data.corr()
     correlations.index.name = None
     return correlations
 
 
-def _fetch_stock_prices(tickers: list[str], start_dt: date, end_dt: date, use_adjusted: bool) -> pd.DataFrame:
-    raw = yf.download(tickers, start=start_dt, end=end_dt, progress=False, auto_adjust=False)
-    prices = raw['Adj Close'] if use_adjusted else raw['Close']
-    return prices
-
-
 def get_yf_ticker_info(ticker: str) -> Optional[dict[str, Any]]:
+    """Fetches ticker information from Yahoo Finance."""
+    # The 'yfinance' library can behave inconsistently, sometimes simply returning None when
+    # the specified ticker is not found Yahoo Finance's database, and sometimes raising an
+    # AttributeError. To handle this, we catch the exception and return None.
     try:
         yf_ticker = yf.Ticker(ticker)
         yf_ticker_info = yf_ticker.get_info()
         return yf_ticker_info
     except AttributeError:
         return None
+
+
+def _fetch_stock_prices(tickers: list[str], start_dt: date, end_dt: date) -> pd.DataFrame:
+    raw = yf.download(tickers, start=start_dt, end=end_dt, progress=False, auto_adjust=False)
+    return raw
 
 
 if __name__ == '__main__':

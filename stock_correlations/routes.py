@@ -40,10 +40,12 @@ def register_routes(app):
         if error:
             return _input_error(error)
 
-        use_returns = form.use_returns.data
-        use_adjusted = form.use_adjusted.data
+        use_price_returns = form.use_price_returns.data
+        adjust_for_corp_actions = form.adjust_for_corp_actions.data
 
-        correlation_matrix = get_correlations_matrix(tickers, start_date, end_date, use_adjusted, use_returns)
+        correlation_matrix = get_correlations_matrix(
+            tickers, start_date, end_date, adjust_for_corp_actions, use_price_returns
+        )
         return correlation_matrix.to_html(classes="corr-table")
 
 
