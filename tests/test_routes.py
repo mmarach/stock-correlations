@@ -57,7 +57,7 @@ def test_about(mock_client):
     assert response.content_type == "text/html; charset=utf-8"
 
 
-def test_submit(mock_client, mock_get_correlations_matrix):
+def test_submit_form(mock_client, mock_get_correlations_matrix):
     # Test submitting valid data and receiving the correlation matrix
     mock_form = {
         "tickers": json.dumps(["FOO", "BAR"]),
@@ -110,7 +110,7 @@ def test_verify_ticker(mock_client, mock_get_yf_ticker_info):
     assert response.status_code == 400
     assert b"Invalid ticker: Make sure the ticker contains only alpha characters and no spaces." in response.data
 
-    # Test submitting a ticker without recent price data in Yahoo Finance's database
+    # Test submitting a ticker without price data in Yahoo Finance's database
     response = mock_client.post("/verify", json={"ticker": "BAR"})
 
     assert response.status_code == 400

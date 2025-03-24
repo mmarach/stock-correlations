@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
     <div class="controls-section">
-        <form id="corrInputForm" method="post" action="{{ url_for('submit') }}">
+        <form id="corrInputForm" method="post" action="{{ url_for('submit_form') }}">
             {{ form.hidden_tag() }}  <!-- CSRF token and hidden fields -->
             <fieldset class="d-flex flex-wrap align-items-end gap-3">
                 <!-- Additional field to add individual tickers to selected tickers list -->
@@ -110,7 +110,7 @@
             selectedTickers.value = JSON.stringify(tickers);
 
             // Make a POST request to submit the selected tickers
-            fetch("{{ url_for('submit') }}", {
+            fetch("{{ url_for('submit_form') }}", {
                 method: "POST",
                 body: new FormData(this),
             })
